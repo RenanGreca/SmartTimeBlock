@@ -7,47 +7,90 @@
 
 import SwiftUI
 import CoreData
+import EventKit
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Item.name, ascending: true)],
         animation: .default)
     private var items: FetchedResults<Item>
+    var eventsCalendarManager = EventsCalendarManager()
 
+    @State private var eventCalendar: EKCalendar?
+    @State private var reminderCalendar: EKCalendar?
+    @State private var eventName: String = ""
+    @State private var count: Double = 0.0
+    @State var calendars = [EKEntityType.event: [EKCalendar](), EKEntityType.reminder: [EKCalendar]()]
+    @State private var reminders: [EKReminder] = []
+    @State private var reminder: EKReminder?
+//    @State var reminderCalendars: [EKCalendar]
+    
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
+        
+        VStack {
+            
+            Picker(selection: $eventCalendar, content: {
+                ForEach(self.calendars[.event]!, id: \.calendarIdentifier) { calendar in
+                    Text(calendar.title).tag(EKCalendar?.some(calendar))
                 }
-                .onDelete(perform: deleteItems)
+            }, label: {
+                Text("Calendar")
+            }).onAppear {
+                self.getCalendars(for: .event)
             }
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+            
+            Picker(selection: $reminderCalendar, content: {
+                ForEach(self.calendars[.reminder]!, id: \.calendarIdentifier) { calendar in
+                    Text(calendar.title).tag(EKCalendar?.some(calendar))
                 }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+            }, label: {
+                Text("Reminder List")
+            }).onAppear {
+                self.getCalendars(for: .reminder)
+            }.onChange(of: reminderCalendar) { _ in
+                self.searchReminders()
             }
-            Text("Select an item")
+            
+            Picker(selection: $reminder, content: {
+                ForEach(self.reminders, id: \.calendarItemIdentifier) { reminder in
+                    Text(reminder.title).tag(EKReminder?.some(reminder))
+                }
+            }, label: {
+                Text("Reminder")
+            }).onChange(of: reminder) { _ in
+                self.search()
+            }
+            Text("Status: \((self.reminder?.isCompleted ?? false) ? "Complete" : "Incomplete" )")
+            Text("\(String(format: "%.2f", self.count)) hours on record")
+        }
+        
+    }
+    
+    
+    struct SettingsButton: View {
+        @State var pushed: Bool = false
+        
+        var body: some View {
+            Button(action: {
+                self.pushed = true
+            }, label: {
+                Image(systemName: "plus")
+                .resizable()
+                .frame(width: 22, height: 22)
+                
+            })
+                .sheet(isPresented: $pushed) {
+                    AddItemView()
+            }
         }
     }
 
     private func addItem() {
         withAnimation {
             let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            newItem.name = ""
 
             do {
                 try viewContext.save()
@@ -74,17 +117,46 @@ struct ContentView: View {
             }
         }
     }
+    
+    private func getCalendars(for type: EKEntityType) {
+        if self.calendars[type]!.count == 0 {
+            
+            eventsCalendarManager.checkAuthorization(for: type) { result in
+                if result {
+                    self.calendars[type]! = eventsCalendarManager.listCalendars(for: type)
+                }
+            }
+            
+        }
+    }
+    
+    private func searchReminders() {
+        if let calendar = self.reminderCalendar {
+            eventsCalendarManager.findReminders(in: calendar) { reminders in
+                self.reminders = reminders
+            }
+        }
+    }
+    
+    private func search() {
+        if let reminderTitle = self.reminder?.title {
+            self.count = eventsCalendarManager.findNamedEvents(eventTitle: reminderTitle,
+                                                               calendar: self.eventCalendar)
+                .reduce(0, { a, b in
+                    // Add up cumulative hours spent in activity
+                    a + (b.endDate.timeIntervalSince(b.startDate) / 3600)
+                }
+            )
+        }
+    }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 struct ContentView_Previews: PreviewProvider {
+    
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        let calendar = EKCalendar(for: .event, eventStore: EKEventStore())
+        calendar.title = "ABC"
+
+        return ContentView(calendars: [.event: [calendar], .reminder: [calendar]]).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

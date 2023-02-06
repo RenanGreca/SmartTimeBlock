@@ -16,6 +16,8 @@
 		1F1943A5298C5071007A92AA /* EventCounterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1943A4298C5071007A92AA /* EventCounterTests.swift */; };
 		1F1943AF298C5071007A92AA /* EventCounterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1943AE298C5071007A92AA /* EventCounterUITests.swift */; };
 		1F1943B1298C5071007A92AA /* EventCounterUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1943B0298C5071007A92AA /* EventCounterUITestsLaunchTests.swift */; };
+		1F1943BE298C50D1007A92AA /* EventKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1943BD298C50D1007A92AA /* EventKitManager.swift */; };
+		1F1943C0298C5602007A92AA /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1943BF298C5602007A92AA /* AddItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		1F1943AA298C5071007A92AA /* EventCounterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EventCounterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F1943AE298C5071007A92AA /* EventCounterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCounterUITests.swift; sourceTree = "<group>"; };
 		1F1943B0298C5071007A92AA /* EventCounterUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCounterUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		1F1943BD298C50D1007A92AA /* EventKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitManager.swift; sourceTree = "<group>"; };
+		1F1943BF298C5602007A92AA /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +106,8 @@
 				1F19438D298C506F007A92AA /* EventCounterApp.swift */,
 				1F19438F298C506F007A92AA /* Persistence.swift */,
 				1F194394298C506F007A92AA /* ContentView.swift */,
+				1F1943BF298C5602007A92AA /* AddItemView.swift */,
+				1F1943BD298C50D1007A92AA /* EventKitManager.swift */,
 				1F194396298C5071007A92AA /* Assets.xcassets */,
 				1F194398298C5071007A92AA /* EventCounter.entitlements */,
 				1F194391298C506F007A92AA /* EventCounter.xcdatamodeld */,
@@ -266,7 +272,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F194393298C506F007A92AA /* EventCounter.xcdatamodeld in Sources */,
+				1F1943C0298C5602007A92AA /* AddItemView.swift in Sources */,
 				1F19438E298C506F007A92AA /* EventCounterApp.swift in Sources */,
+				1F1943BE298C50D1007A92AA /* EventKitManager.swift in Sources */,
 				1F194395298C506F007A92AA /* ContentView.swift in Sources */,
 				1F194390298C506F007A92AA /* Persistence.swift in Sources */,
 			);
@@ -427,6 +435,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Accesses calendars to get event duration";
+				INFOPLIST_KEY_NSRemindersUsageDescription = "Accesses reminders to get task list";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -465,6 +475,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Accesses calendars to get event duration";
+				INFOPLIST_KEY_NSRemindersUsageDescription = "Accesses reminders to get task list";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

@@ -13,7 +13,7 @@ struct EventCounterApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(calendars: [.event: [], .reminder: []])
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
